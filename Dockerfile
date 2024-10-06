@@ -21,15 +21,14 @@ RUN apt-get update && apt-get -y install \
         libxm4
 
 # Download Freesurfer 7.4.1 from MGH and untar to /opt
-#RUN wget -N -q -O /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz | tar -xz -C /opt && chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
 
 # Or instead, download the installer to this folder and build the image
-COPY freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz /tmp/
+#COPY freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz /tmp/
+#RUN tar -xz -C /opt -f /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+#RUN rm /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+#RUN chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
 
-RUN tar -xz -C /opt -f /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
-RUN rm /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
-
-RUN chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
 RUN cat /opt/freesurfer/SetUpFreeSurfer.sh >> ~/.bashrc
 
 RUN apt-get update --fix-missing \
@@ -49,5 +48,3 @@ RUN echo 'FREESURFER_HOME=/opt/freesurfer' >> ~/.bashrc
 ENV FREESURFER_HOME=/opt/freesurfer
 RUN chmod +x /opt/freesurfer/bin/fs_install_mcr 
 RUN /opt/freesurfer/bin/fs_install_mcr R2014b
-
-COPY license.txt /opt/freesurfer/

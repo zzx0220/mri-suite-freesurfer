@@ -6,7 +6,7 @@ With this suite, one could run analysis on different platforms, macOS, linux or 
 To begin with, one should build the image or directly pull the pre-built image. Several settings need to be fixed for specific aims (see below).
 
 # Pre-settings
-Because the extract data of freesurfer is too large, please mannually add the installer to this folder and your license as well. After that, build this image.
+Please mannually add the license to `/opt/freesurfer`.
 
 # Mount local data
 Usually we want to mount local data to the container, set this when run this image by
