@@ -22,7 +22,6 @@ RUN apt-get update && apt-get -y install \
 
 # Download Freesurfer 7.4.1 from MGH and untar to /opt
 RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz | tar -xz -C /opt && chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
-# RUN curl https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz | tar -xz -C /opt && chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
 
 RUN apt-get update --fix-missing \
  && apt-get install -y bzip2 ca-certificates \
@@ -36,8 +35,10 @@ RUN apt-get update --fix-missing \
 RUN cat /opt/freesurfer/SetUpFreeSurfer.sh >> ~/.bashrc
 
 # The brainstem and hippocampal subfield modules in FreeSurfer-dev require the Matlab R2014b runtime
-ENV FREESURFER_HOME /opt/freesurfer
-RUN fs_install_mcr R2014b
-RUN wget -N -qO- "https://surfer.nmr.mgh.harvard.edu/fswiki/MatlabRuntime?action=AttachFile&do=get&target=runtime2014bLinux.tar.gz" | tar -xz -C $FREESURFER_HOME && chown -R root:root /opt/freesurfer/MCRv84 && chmod -R a+rx /opt/freesurfer/MCRv84
+ENV FREESURFER_HOME="/opt/freesurfer"
+COPY fs_install_mcr /opt/freesurfer/bin/
+RUN cd /opt/freesurfer/bin/
+RUN chmod +x /opt/freesurfer/bin/fs_install_mcr && /opt/freesurfer/bin/fs_install_mcr R2014b
 
+RUN cd ~/..
 RUN pip3 install numpy nibabel scipy pandas
