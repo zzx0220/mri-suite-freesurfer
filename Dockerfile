@@ -21,7 +21,16 @@ RUN apt-get update && apt-get -y install \
         libxm4
 
 # Download Freesurfer 7.4.1 from MGH and untar to /opt
-RUN wget -N -q -O /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+#RUN wget -N -q -O /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+
+# Or instead, download the installer to this folder and build the image
+COPY freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz /tmp/
+
+RUN tar -xz -C /opt -f /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+RUN rm /tmp/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz
+
+RUN chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
+RUN cat /opt/freesurfer/SetUpFreeSurfer.sh >> ~/.bashrc
 
 RUN apt-get update --fix-missing \
  && apt-get install -y bzip2 ca-certificates \
@@ -31,7 +40,14 @@ RUN apt-get update --fix-missing \
       gcc g++ libeigen3-dev zlib1g-dev libgl1-mesa-dev libfftw3-dev libtiff5-dev \
       xvfb xfonts-100dpi xfonts-75dpi xfonts-cyrillic \
       unzip imagemagick jq vim python3-pip libxt-dev libxmu-dev 
+RUN apt-get update && \
+      apt-get install -y libqt5gui5 && \
+      rm -rf /var/lib/apt/lists/*
 
 # The brainstem and hippocampal subfield modules in FreeSurfer-dev require the Matlab R2014b runtime
-COPY /setup_files/fs_install_mcr /tmp/
-COPY /setup_files/setup_freesurfer.sh /tmp/
+RUN echo 'FREESURFER_HOME=/opt/freesurfer' >> ~/.bashrc
+ENV FREESURFER_HOME=/opt/freesurfer
+RUN chmod +x /opt/freesurfer/bin/fs_install_mcr 
+RUN /opt/freesurfer/bin/fs_install_mcr R2014b
+
+COPY license.txt /opt/freesurfer/

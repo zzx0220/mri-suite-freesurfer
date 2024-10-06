@@ -5,11 +5,8 @@ With this suite, one could run analysis on different platforms, macOS, linux or 
 
 To begin with, one should build the image or directly pull the pre-built image. Several settings need to be fixed for specific aims (see below).
 
-# Pull and push
-Use the github workflow to automatically build the image after push to the github repository. 
-
 # Pre-settings
-Because the extract data of freesurfer is too large, please mannually extract it when using this image. 
+Because the extract data of freesurfer is too large, please mannually add the installer to this folder and your license as well. After that, build this image.
 
 # Mount local data
 Usually we want to mount local data to the container, set this when run this image by
