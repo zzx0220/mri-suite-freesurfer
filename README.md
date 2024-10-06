@@ -8,6 +8,9 @@ To begin with, one should build the image or directly pull the pre-built image. 
 # Pull and push
 Use the github workflow to automatically build the image after push to the github repository. 
 
+# Pre-settings
+Because the extract data of freesurfer is too large, please mannually extract it when using this image. 
+
 # Mount local data
 Usually we want to mount local data to the container, set this when run this image by
 ```
